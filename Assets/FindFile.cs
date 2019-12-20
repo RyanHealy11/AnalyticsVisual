@@ -11,6 +11,8 @@ public class FindFile : MonoBehaviour
 
     public List<IntEvent> yes  = new List<IntEvent>();
     public List<FloatEvent> no = new List<FloatEvent>();
+    public List<FloatEvent> maybe  = new List<FloatEvent>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +30,26 @@ public class FindFile : MonoBehaviour
                 for (int k = 0; k < no[i].values.Count; k++)
                 {
                     Debug.Log(no[i].eventName + " " + no[i].values[k]);
+                }
+            }
+        }
+        if (yes.Count>0)
+        {
+            for (int i = 0; i < yes.Count; i++)
+            {
+                for (int k = 0; k < yes[i].values.Count; k++)
+                {
+                    Debug.Log(yes[i].eventName + " " + yes[i].values[k]);
+                }
+            }
+        }
+        if (maybe.Count>0)
+        {
+            for (int i = 0; i < maybe.Count; i++)
+            {
+                for (int k = 0; k < maybe[i].values.Count; k++)
+                {
+                    Debug.Log(maybe[i].eventName + " " + maybe[i].values[k]);
                 }
             }
         }
@@ -92,11 +114,83 @@ public class FindFile : MonoBehaviour
             }
             else if (fun.Contains("FloatEvents_"))
             {
-                //do other things
+                if (File.Exists(fun))
+                {
+                    file = File.OpenRead(fun);
+
+                    BinaryFormatter bf = new BinaryFormatter();
+
+                    string[] lines = (string[])bf.Deserialize(file);
+                    file.Close();            
+
+                    
+                    foreach (string line in lines)
+                    {
+                        string[] values = line.Split(',');
+                        if (maybe.Count != 0)
+                        {
+                            string temp = values[0];
+                            bool found = false;
+                            for (int i = 0; i < maybe.Count; i++)
+                            {
+                                if (maybe[i].eventName == temp)
+                                {
+                                    maybe[i].values.Add(float.Parse(values[1]));
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                maybe.Add(new FloatEvent(values[0], float.Parse(values[1])));
+                            }
+                        }
+                        else
+                        {
+                            maybe.Add(new FloatEvent(values[0], float.Parse(values[1])));
+                        }
+                    }
+                }
             }
             else if (fun.Contains("IntEvents_"))
             {
-                //do the last thing
+                if (File.Exists(fun))
+                {
+                    file = File.OpenRead(fun);
+
+                    BinaryFormatter bf = new BinaryFormatter();
+
+                    string[] lines = (string[])bf.Deserialize(file);
+                    file.Close();
+
+
+                    foreach (string line in lines)
+                    {
+                        string[] values = line.Split(',');
+                        if (yes.Count != 0)
+                        {
+                            string temp = values[0];
+                            bool found = false;
+                            for (int i = 0; i < yes.Count; i++)
+                            {
+                                if (yes[i].eventName == temp)
+                                {
+                                    yes[i].values.Add(int.Parse(values[1]));
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                yes.Add(new IntEvent(values[0], int.Parse(values[1])));
+                            }
+                        }
+                        else
+                        {
+                            yes.Add(new IntEvent(values[0], int.Parse(values[1])));
+                        }
+                    }
+                }
             }
             else
             {
