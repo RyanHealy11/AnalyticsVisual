@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.UI;
 
+
 public class FindFile : MonoBehaviour
 {
     private string folderPath;
@@ -21,9 +22,8 @@ public class FindFile : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-
-    }
+    { }
+       
 
     // Update is called once per frame
     void Update()
@@ -70,8 +70,12 @@ public class FindFile : MonoBehaviour
     }
     public void LoadData()
     {
-        folderPath = EditorUtility.OpenFolderPanel("wooooo", "%appdata%", "");
-
+        //FileBrowser.WaitForLoadDialog(false, null, "Load File", "Load");
+        //StartCoroutine(ShowLoadDialogCoroutine());
+        //folderPath = EditorUtility.OpenFolderPanel("wooooo", "%appdata%", "");
+        folderPath = "%UserProfile%/AppData/LocalLow/DefaultCompany/LiveWallpaper-master";
+        //folderPath = "%UserProfile%";
+        folderPath = System.Environment.ExpandEnvironmentVariables(folderPath);
         string[] filePaths = Directory.GetFiles(folderPath, "*.dat");
 
         foreach (string fun in filePaths)
@@ -295,4 +299,5 @@ public class FindFile : MonoBehaviour
             IntEvents.text = IntEvents.text + "\n";
         }
     }
+   
 }
